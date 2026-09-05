@@ -2,7 +2,7 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="LegalDesk"><meta name="theme-color" content="#111417">
 <title>LegalDesk</title>
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><link rel="apple-touch-icon" sizes="512x512" href="icon-512.png"><link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"><link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png"><link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><link rel="icon" type="image/png" sizes="512x512" href="icon-512.png"><link rel="shortcut icon" href="favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="icon-180.png"><link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -576,7 +576,7 @@ var fabOpen=false;
 function goV(v){V=v;sel=null;selC=null;mobO=false;fabOpen=false;bulkMode=false;bulkSel.clear();R();var m=document.querySelector('.main');if(m)m.scrollTop=0}
 function mTitle(){var t={work:'Work',matters:'Matters',hearings:'Upcoming',tasks:'Tasks',clients:'Clients',payments:'Payments',expenses:'Expenses',research:'Research',meetings:'Meetings',chamber:'Chamber Cal.',timeline:'Timeline',limitation:'Limitation',tools:'Legal Tools',settings:'Settings'};if(sel)return'Matter';return t[V]||'LegalDesk'}
 function focusSearch(){if(V!=='matters'&&V!=='tasks'){goV('matters')}setTimeout(function(){var el=document.getElementById('matterSearch')||document.getElementById('taskSearchInput');if(el)el.focus()},60)}
-function workTodayCount(){var t=TD();var tk=allT().filter(function(x){return !x.isSubTask&&x.status!=='Done'&&((x.perfDate===t)||(x.dueDate&&x.dueDate<=t))}).length;var hr=upH().filter(function(h){return h.dt===t}).length;return tk+hr}
+function workTodayCount(){var t=TD();var tk=allT().filter(function(x){if(x.isSubTask||x.status==='Done')return false;var s=x.perfDate||x.dueDate,e=x.dueDate||x.perfDate;if(!s&&!e)return false;s=s||e;e=e||s;if(e<s){var _t=s;s=e;e=_t}return s<=t&&e>=t}).length;var hr=upH().filter(function(h){return h.dt===t}).length;return tk+hr}
 function mNav(){
   var t=TD();
   var todayN=workTodayCount();
@@ -901,7 +901,7 @@ function rWork(){
   var rangeMtg=(D.meetings||[]).filter(function(mt){return mt.date>=range.from&&mt.date<=range.to});
   // Apply custom sequence (drag-reorder) to the Today/range task list
   var _dv=function(x){var d=x.dueDate||x.perfDate;return d?dU(d):1e6};
-  rangeT.sort(function(a,b){var da=_dv(a),db=_dv(b);if(da!==db)return da-db;return(a.title||'').localeCompare(b.title||'')});
+  rangeT.sort(function(a,b){var da=_dv(a),db=_dv(b);if(da!==db)return da-db;var na=a.mnd||'9999-99-99',nb=b.mnd||'9999-99-99';if(na!==nb)return na.localeCompare(nb);return(a.title||'').localeCompare(b.title||'')});
   var _ord=getTaskOrder();
   if(_ord.length){rangeT.sort(function(a,b){var ai=_ord.indexOf(a.mid+'|'+a.id),bi=_ord.indexOf(b.mid+'|'+b.id);if(ai<0&&bi<0)return 0;if(ai<0)return 1;if(bi<0)return -1;return ai-bi})}
 
